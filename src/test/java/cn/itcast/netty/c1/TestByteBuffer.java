@@ -35,6 +35,7 @@ public class TestByteBuffer {
 
             }
         } catch (IOException e) {
+            e.printStackTrace();
         }
 
 
