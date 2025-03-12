@@ -29,15 +29,16 @@ public class Server {
             //4.accept 建立与客户端的连接  SocketChannel 用来与客户端之间通信
             log.debug("connecting....");
             SocketChannel sc = ssc.accept();
-            log.debug("connected....");
+            log.debug("connected....{}",sc);
             channels.add(sc);
             for (SocketChannel channel : channels) {
                 //5.接收客户端发送的数据
+                log.debug("before read...{}",channel);
                 channel.read(buffer);
                 buffer.flip();
                 debugRead(buffer);
                 buffer.clear();
-
+                log.debug("after read...{}",channel);
             }
         }
 
