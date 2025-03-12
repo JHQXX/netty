@@ -11,37 +11,34 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static cn.itcast.netty.c1.ByteBufferUtil.debugRead;
-
 @Slf4j
-public class Server {
+public class NioServer {
     public static void main(String[] args) throws IOException {
-        //使用 非阻塞模式 单线程
+        //使用 NIO 理解阻塞模式 单线程
         //0.ByteBuffer
         ByteBuffer buffer=ByteBuffer.allocate(16);
         //1.创建完服务器
         ServerSocketChannel ssc=ServerSocketChannel.open();
-        ssc.configureBlocking(false);//非阻塞模式 切换为
+
         //2.绑定监听端口
         ssc.bind(new InetSocketAddress(8080));
+
         //3.连接集合
         List<SocketChannel> channels=new ArrayList<>();
         while (true){
             //4.accept 建立与客户端的连接  SocketChannel 用来与客户端之间通信
-            SocketChannel sc = ssc.accept(); //非阻塞，线程还是会继续运行，如果没有连接建立 sc返回一个null
-            if (sc!=null){
-                log.debug("connected....{}",sc);
-                sc.configureBlocking(false);//非阻塞模式
-                channels.add(sc);
-            }
+            log.debug("connecting....");
+            SocketChannel sc = ssc.accept(); //默认阻塞，阻塞方法 线程停止运行
+            log.debug("connected....{}",sc);
+            channels.add(sc);
             for (SocketChannel channel : channels) {
                 //5.接收客户端发送的数据
-                int read = channel.read(buffer);//非阻塞模式，线程还是会继续运行，如果没有读到数据，read 返回 0
-                if (read>0){
-                    buffer.flip();
-                    debugRead(buffer);
-                    buffer.clear();
-                    log.debug("after read...{}",channel);
-                }
+                log.debug("before read...{}",channel);
+                channel.read(buffer); //阻塞方法，线程停止运行
+                buffer.flip();
+                debugRead(buffer);
+                buffer.clear();
+                log.debug("after read...{}",channel);
             }
         }
 
