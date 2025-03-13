@@ -1,8 +1,6 @@
-package cn.itcast.netty.c1;
+package cn.itcast.nio.c1;
 
 import java.nio.ByteBuffer;
-
-import static cn.itcast.netty.c1.ByteBufferUtil.debugAll;
 
 public class TestByteBufferRead {
     public static void main(String[] args) {
@@ -29,7 +27,7 @@ public class TestByteBufferRead {
 
         //get(i) 不会改变索引指针
         System.out.println((char)buffer.get(3));
-        debugAll(buffer);
+        ByteBufferUtil.debugAll(buffer);
 
     }
 }

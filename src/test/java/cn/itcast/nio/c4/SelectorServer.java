@@ -1,17 +1,13 @@
-package cn.itcast.netty.c4;
+package cn.itcast.nio.c4;
 
+import cn.itcast.nio.c1.ByteBufferUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.*;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
-
-import static cn.itcast.netty.c1.ByteBufferUtil.debugAll;
-import static cn.itcast.netty.c1.ByteBufferUtil.debugRead;
 
 @Slf4j
 public class SelectorServer {
@@ -29,7 +25,7 @@ public class SelectorServer {
                 for (int j = 0; j < length; j++) {
                     target.put(source.get());
                 }
-                debugAll(target);
+                ByteBufferUtil.debugAll(target);
 
             }
         }

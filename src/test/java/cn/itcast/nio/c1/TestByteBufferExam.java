@@ -1,8 +1,6 @@
-package cn.itcast.netty.c1;
+package cn.itcast.nio.c1;
 
 import java.nio.ByteBuffer;
-
-import static cn.itcast.netty.c1.ByteBufferUtil.debugAll;
 
 public class TestByteBufferExam {
     /**
@@ -40,7 +38,7 @@ public class TestByteBufferExam {
                 for (int j = 0; j < length; j++) {
                     target.put(source.get());
                 }
-                debugAll(target);
+                ByteBufferUtil.debugAll(target);
 
             }
         }

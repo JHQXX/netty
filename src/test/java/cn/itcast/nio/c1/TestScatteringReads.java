@@ -1,11 +1,9 @@
-package cn.itcast.netty.c1;
+package cn.itcast.nio.c1;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
-
-import static cn.itcast.netty.c1.ByteBufferUtil.debugAll;
 
 public class TestScatteringReads {
     public static void main(String[] args) {
@@ -18,9 +16,9 @@ public class TestScatteringReads {
             b1.flip();
             b2.flip();
             b3.flip();
-            debugAll(b1);
-            debugAll(b2);
-            debugAll(b3);
+            ByteBufferUtil.debugAll(b1);
+            ByteBufferUtil.debugAll(b2);
+            ByteBufferUtil.debugAll(b3);
         } catch (IOException e) {
         }
 
