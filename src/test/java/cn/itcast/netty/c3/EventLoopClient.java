@@ -18,8 +18,9 @@ import java.util.Scanner;
 public class EventLoopClient {
     public static void main(String[] args) throws InterruptedException {
         //2.带Future ,Promise 的类型都是和异步方法配套使用，用来处理结果
+        NioEventLoopGroup group = new NioEventLoopGroup();
         ChannelFuture channelFuture = new Bootstrap()
-                .group(new NioEventLoopGroup())
+                .group(group)
                 .channel(NioSocketChannel.class)
                 .handler(new ChannelInitializer<NioSocketChannel>() {
                     @Override//在连接建立后被调用
@@ -71,11 +72,9 @@ public class EventLoopClient {
         log.debug("处理关闭后的操作");*/
 
         //2.异步处理关闭
-        closeFuture.addListener(new ChannelFutureListener() {
-            @Override
-            public void operationComplete(ChannelFuture future) throws Exception {
-                log.debug("处理关闭后的操作");
-            }
+        closeFuture.addListener((ChannelFutureListener) future -> {
+            log.debug("处理关闭后的操作");
+            group.shutdownGracefully();
         });
 
     }
