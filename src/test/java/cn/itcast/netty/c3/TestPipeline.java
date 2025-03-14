@@ -32,6 +32,15 @@ public class TestPipeline {
                                 super.channelRead(ctx, name);
                             }
                         });
+                        pipeline.addLast("h4",new ChannelOutboundHandlerAdapter(){
+                            @Override
+                            public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
+                                log.debug("4");
+                                //super.write 内部调用的也是 ctx.writeAndFlush === ctx 是从当前处理器 倒找出栈处理器
+                                super.write(ctx, msg, promise);
+
+                            }
+                        });
                         pipeline.addLast("h2",new ChannelInboundHandlerAdapter(){
                             @Override
                             public void channelRead(ChannelHandlerContext ctx, Object name) throws Exception {
@@ -47,15 +56,10 @@ public class TestPipeline {
                             @Override
                             public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
                                 log.debug("3,结果{},class:{}",msg,msg.getClass());
-                                ch.writeAndFlush(ctx.alloc().buffer().writeBytes("server...".getBytes()));
-                            }
-                        });
-                        pipeline.addLast("h4",new ChannelOutboundHandlerAdapter(){
-                            @Override
-                            public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
-                                log.debug("4");
-                                super.write(ctx, msg, promise);
-                               
+                                //ctx 是从当前处理器 倒找出栈处理器
+                                ctx.writeAndFlush(ctx.alloc().buffer().writeBytes("server...".getBytes()));
+                                //channel 是从尾部 倒找出栈处理器
+//                                ch.writeAndFlush(ctx.alloc().buffer().writeBytes("server...".getBytes()));
                             }
                         });
                         pipeline.addLast("h5",new ChannelOutboundHandlerAdapter(){
