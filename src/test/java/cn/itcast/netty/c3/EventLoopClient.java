@@ -8,7 +8,11 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.string.StringEncoder;
+import io.netty.handler.logging.LogLevel;
+import io.netty.handler.logging.LoggingHandler;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.Scanner;
 
 @Slf4j
 public class EventLoopClient {
@@ -20,6 +24,7 @@ public class EventLoopClient {
                 .handler(new ChannelInitializer<NioSocketChannel>() {
                     @Override//在连接建立后被调用
                     protected void initChannel(NioSocketChannel ch) throws Exception {
+                        ch.pipeline().addLast(new LoggingHandler(LogLevel.DEBUG));
                         ch.pipeline().addLast(new StringEncoder());
                     }
                 })
@@ -34,7 +39,7 @@ public class EventLoopClient {
         channel .writeAndFlush("hello world");*/
 
         //2.2使用 addListener（回调对象） 方法异步处理结果
-        channelFuture.addListener(new ChannelFutureListener() {
+        /*channelFuture.addListener(new ChannelFutureListener() {
             @Override
             //在nio线程连接建立好了之后，会调用 operationComplete 方法
             public void operationComplete(ChannelFuture future) throws Exception {
@@ -42,8 +47,36 @@ public class EventLoopClient {
                 log.debug("线程是：{}",channel);
                 channel.writeAndFlush("你好");
             }
-        });
+        });*/
+        Channel channel = channelFuture.sync().channel();
+        log.debug("连接建立:{}",channel);
+        new Thread(()->{
+            Scanner scanner = new Scanner(System.in);
+            while (true){
+                String line = scanner.nextLine();
+                if ("q".equals(line)){
+                    channel.close(); //close 异步操作 1s之后
+//                    log.debug("处理关闭之后的操作"); //不能在这里善后
+                    break;
+                }
+                channel.writeAndFlush(line);
+            }
+        },"input").start();
 
+        //获取CloseFuture对象 两种关闭 1.同步处理关闭 2.异步处理关闭
+        ChannelFuture closeFuture = channel.closeFuture();
+        /*//1.同步处理关闭
+        System.out.println("waiting close......");
+        closeFuture.sync();
+        log.debug("处理关闭后的操作");*/
+
+        //2.异步处理关闭
+        closeFuture.addListener(new ChannelFutureListener() {
+            @Override
+            public void operationComplete(ChannelFuture future) throws Exception {
+                log.debug("处理关闭后的操作");
+            }
+        });
 
     }
 }
