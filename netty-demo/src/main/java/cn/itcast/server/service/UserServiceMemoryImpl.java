@@ -22,4 +22,9 @@ public class UserServiceMemoryImpl implements UserService {
         }
         return pass.equals(password);
     }
+
+    @Override
+    public boolean loginOut(String username, String password) {
+        return false;
+    }
 }

@@ -7,7 +7,6 @@ import cn.itcast.server.session.SessionFactory;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-
 @ChannelHandler.Sharable
 public class LoginRequestMessageHandler extends SimpleChannelInboundHandler<LoginRequestMessage> {
     @Override
@@ -20,7 +19,7 @@ public class LoginRequestMessageHandler extends SimpleChannelInboundHandler<Logi
             SessionFactory.getSession().bind(ctx.channel(), username);
             message = new LoginResponseMessage(true, "登录成功");
         } else {
-            message = new LoginResponseMessage(false, "用户名或密码不正确");
+            message = new LoginResponseMessage(false, "用户名或密码错误");
         }
         ctx.writeAndFlush(message);
     }

@@ -19,19 +19,21 @@ public class GroupCreateRequestMessageHandler extends SimpleChannelInboundHandle
     protected void channelRead0(ChannelHandlerContext ctx, GroupCreateRequestMessage msg) throws Exception {
         String groupName = msg.getGroupName();
         Set<String> members = msg.getMembers();
-        // 群管理器
+        //群管理器
         GroupSession groupSession = GroupSessionFactory.getGroupSession();
         Group group = groupSession.createGroup(groupName, members);
-        if (group == null) {
-            // 发生成功消息
-            ctx.writeAndFlush(new GroupCreateResponseMessage(true, groupName + "创建成功"));
-            // 发送拉群消息
+        if (group==null){
+            //发送拉去消息
             List<Channel> channels = groupSession.getMembersChannel(groupName);
             for (Channel channel : channels) {
-                channel.writeAndFlush(new GroupCreateResponseMessage(true, "您已被拉入" + groupName));
+                channel.writeAndFlush(new GroupCreateResponseMessage(true,"您已被拉入"+groupName));
             }
-        } else {
-            ctx.writeAndFlush(new GroupCreateResponseMessage(false, groupName + "已经存在"));
+            //发送成功消息
+            ctx.writeAndFlush(new GroupCreateResponseMessage(true,groupName+"创建成功"));
+        }else {
+            ctx.writeAndFlush(new GroupCreateResponseMessage(false,groupName+"创建失败"+":群已经失败"));
         }
+
     }
+
 }

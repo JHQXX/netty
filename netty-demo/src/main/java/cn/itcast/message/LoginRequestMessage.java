@@ -9,6 +9,7 @@ public class LoginRequestMessage extends Message {
     private String username;
     private String password;
 
+
     public LoginRequestMessage() {
     }
 
